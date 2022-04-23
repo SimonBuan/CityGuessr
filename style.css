@@ -7,13 +7,33 @@ body {
 
 #map{
     position: absolute;
-    bottom: 0;
+    overflow: visible;
+    bottom: 40px;
     right: 0;
     height: 25%;
-    width:25%;
+    width:  25%;
     z-index: 5; 
 }
 #pano {
     height: 100%;
     width: 100%;
+    z-index: 0;
+}
+
+#guessButton {
+    line-height: 30px;
+    width: 25%;
+    height: 30px;
+    text-align: center;
+    border-radius: 10px;
+    bottom: 0;
+    right:0;
+    position: absolute;
+    background-color: darkolivegreen;
+    color: white;
+    z-index: 10;
+    font-size: 16px;
+    font-family:'Roboto',sans-serif;
+    font-weight:300;
+    text-shadow: 0 0.04em 0.04em rgba(0,0,0,0.35);
 }

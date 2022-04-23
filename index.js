@@ -145,10 +145,6 @@ function selectLocation(location, map) {
     position: location,
     map: map
   });
-
-  console.log(geoLocation.toString());
-  console.log(location.toString());
-  console.log(calculateDistance(geoLocation, location));
 }
 
 function calculateDistance(locationA, locationB){
