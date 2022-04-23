@@ -1,5 +1,7 @@
 const MAX_PANORAMA_DISTANCE = 100;
-var geoLocation;
+var panoLocation;
+var guessedLocation;
+var numGuesses = 0;
 var marker;
 
 const countryBoundingBoxes = [
@@ -95,6 +97,7 @@ const countryBoundingBoxes = [
 
 window.initialize = initialize;
 
+
 function initialize() {
   const sv = new google.maps.StreetViewService();
   sv.getPanoramaByLocation(getRandomLocation(), MAX_PANORAMA_DISTANCE, function (streetViewPanoramaData, status) {
@@ -104,6 +107,8 @@ function initialize() {
         initialize();
     }
   });
+
+  document.getElementById("guessButton").addEventListener("click", confirmGuess);
 }
 
 function getRandomLocation() {
@@ -114,12 +119,14 @@ function getRandomLocation() {
 }
 
 function initPanoramaAndMap(data) {
-  geoLocation = data.location.latLng;
+  panoLocation = data.location.latLng;
   const map = new google.maps.Map(document.getElementById("map"), {
     center: { lat: 0, lng: 0 },
-    zoom: 0,
+    zoom: 1,
     mapTypeControl: false,
     streetViewControl: false,
+    fullscreenControl: false,
+    zoomControl: false,
   });
   const panorama = new google.maps.StreetViewPanorama(
     document.getElementById("pano"),
@@ -127,6 +134,9 @@ function initPanoramaAndMap(data) {
       addressControl: false,
       linksControl: false,
       enableCloseButton: false,
+      fullscreenControl: false,
+      clickToGo: false,
+      showRoadLabels: false,
     }
   );
   panorama.setPano(data.location.pano)
@@ -138,6 +148,7 @@ function initPanoramaAndMap(data) {
 }
 
 function selectLocation(location, map) {
+  guessedLocation = location;
   if(marker != null){
     marker.setMap(null);
   }
@@ -169,3 +180,12 @@ function degreesToRadians(degrees){
   return degrees * (Math.PI/180);
 }
 
+function confirmGuess(){
+  if(guessedLocation != undefined){
+    calculateDistance(guessedLocation, panoLocation);
+    numGuesses++;
+    marker.setLabel(numGuesses+'');
+
+    marker = null;
+  }
+}
