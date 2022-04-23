@@ -114,7 +114,7 @@ function getRandomLocation() {
 }
 
 function initPanoramaAndMap(data) {
-  geoLocation = data.location;
+  geoLocation = data.location.latLng;
   const map = new google.maps.Map(document.getElementById("map"), {
     center: { lat: 0, lng: 0 },
     zoom: 0,
@@ -129,7 +129,7 @@ function initPanoramaAndMap(data) {
       enableCloseButton: false,
     }
   );
-  panorama.setPano(geoLocation.pano)
+  panorama.setPano(data.location.pano)
   map.setStreetView(panorama);
 
   google.maps.event.addListener(map, 'click', function(event){
@@ -145,5 +145,31 @@ function selectLocation(location, map) {
     position: location,
     map: map
   });
+
+  console.log(geoLocation.toString());
+  console.log(location.toString());
+  console.log(calculateDistance(geoLocation, location));
+}
+
+function calculateDistance(locationA, locationB){
+  const earthRadius = 6371;
+  const latA = locationA.lat();
+  const lngA = locationA.lng();
+  const latB = locationB.lat();
+  const lngB = locationB.lng();
+
+  const dLat = degreesToRadians(latB - latA);
+  const dLng = degreesToRadians(lngB - lngA);
+  
+  const a = Math.sin(dLat/2) * Math.sin(dLat/2) + 
+    Math.cos(degreesToRadians(latA)) * Math.cos(degreesToRadians(latB)) * 
+    Math.sin(dLng/2) * Math.sin(dLng/2);
+
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  return earthRadius * c;
+}
+
+function degreesToRadians(degrees){
+  return degrees * (Math.PI/180);
 }
 
