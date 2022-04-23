@@ -1,0 +1,19 @@
+html,
+body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+#map{
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    height: 25%;
+    width:25%;
+    z-index: 5; 
+}
+#pano {
+    height: 100%;
+    width: 100%;
+}
