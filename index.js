@@ -151,7 +151,7 @@ function initPanoramaAndMap(data) {
 function selectLocation(location, map) {
   guessedLocation = location;
   enableButton();
-  
+
   if(marker != null){
     marker.setMap(null);
   }
@@ -185,7 +185,7 @@ function degreesToRadians(degrees){
 
 function confirmGuess(){
   if(guessedLocation){
-    calculateDistance(guessedLocation, panoLocation);
+    addGuessToHTML(guessedLocation);
     numGuesses++;
     marker.setLabel(numGuesses+'');
 
@@ -202,4 +202,25 @@ function disableButton(){
 function enableButton(){
   guessButton.innerText = "Confirm guess";
   guessButton.disabled = false;
+}
+
+function addGuessToHTML(guessedLocation){
+  const distance = calculateDistance(guessedLocation, panoLocation);
+  const list = document.getElementById("guessList");
+  list.innerHTML += "<li>" + distanceToString(distance) + "</li>";
+}
+
+function distanceToString(distance){
+  if(distance >= 10){
+    return new Intl.NumberFormat('en-GB', {
+      style: 'unit',
+      unit: 'kilometer'
+    }).format(distance);
+  }
+  else{
+    return new Intl.NumberFormat('en-GB',{
+      style: 'unit',
+      unit: 'meter'
+    }).format(distance*1000);
+  }
 }

@@ -41,3 +41,15 @@ body {
 #guessButton:disabled{
     background-color: black;
 }
+
+#guessListWrapper{
+    position: absolute;
+    z-index: 5;
+    text-align: center;
+    top:0;
+    right: 0;
+    width: 15%;
+    background-color: #c7c9c8;
+    border-radius: 15px;
+    margin: 5px;
+}

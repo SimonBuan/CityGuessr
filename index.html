@@ -12,7 +12,11 @@
     <div id="map"></div>
 
     <button type="button" id="guessButton" disabled>Select a location</button>
-    <div id="guessList"></div>
+    <div id="guessListWrapper">
+      <h2>Previous Guesses:</h2>
+        <ol id="guessList">
+        </ol>
+    </div>
 
     <!-- 
      The `defer` attribute causes the callback to execute after the full HTML
