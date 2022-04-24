@@ -6,6 +6,7 @@ var bestGuessDistance;
 var numGuesses = 0;
 var marker;
 var guessButton;
+var playAgainButton;
 var resultsOverlay;
 
 const countryBoundingBoxes = [
@@ -115,14 +116,31 @@ function initialize() {
   guessButton = document.getElementById("guessButton");
   guessButton.addEventListener("click", confirmGuess);
 
+  playAgainButton = document.getElementById("playAgainButton");
+  playAgainButton.addEventListener("click", resetGame);
+
   resultsOverlay = document.getElementById("results");
+  resultsOverlay.style.visibility = "hidden";
+}
+
+function resetGame(){
+  guessedLocation = null;
+  marker = null;
+  bestGuess = null;
+  bestGuessDistance = null;
+  numGuesses = 0;
+  marker = null;
+
+  document.getElementById("guessList").innerHTML = "";
+  document.getElementById("resultHeader").innerHTML = "";
+  initialize();
 }
 
 function getRandomLocation() {
   var country = countryBoundingBoxes[Math.floor(Math.random() * countryBoundingBoxes.length)];
   const lat = Math.random() * (country[3] - country[1]) + country[1];
   const lng = Math.random() * (country[2] - country[0]) + country[0];
-  return new google.maps.LatLng(lat, lng);
+  return new google.maps.LatLng(40.689247, -74.044502);
 }
 
 function initPanoramaAndMap(data) {
@@ -159,7 +177,7 @@ function selectLocation(location, map) {
   guessedLocation = location;
   enableButton();
 
-  if(marker != null){
+  if(marker){
     marker.setMap(null);
   }
   marker = new google.maps.Marker({
@@ -221,7 +239,7 @@ function addGuessToHTML(distance){
 }
 
 function distanceToString(distance){
-  if(distance >= 10){
+  if(distance >= 1){
     return new Intl.NumberFormat('en-GB', {
       style: 'unit',
       unit: 'kilometer'
@@ -248,12 +266,25 @@ function enableButton(){
 function displayWinResult(){
   resultsOverlay.style.visibility = "visible";
   resultsOverlay.style.backgroundColor = "green";
+
+  const text = document.getElementById("resultHeader")
+  text.innerHTML = "<h1>Victory</h1>";
+  text.innerHTML += "<p>You were within 100 meters from the location!"
+  createResultHTML();
 }
 
 function displayLossResult(){
   resultsOverlay.style.visibility = "visible";
   resultsOverlay.style.backgroundColor = "#c71104";
 
+  const text = document.getElementById("resultHeader")
+  text.innerHTML = "<h1>Defeat</h1>";
+  text.innerHTML += "<p>You were " + 
+    distanceToString(bestGuessDistance) +   " from the right location!</p>";
+  createResultHTML();
+}
+
+function createResultHTML(){
   const map = new google.maps.Map(document.getElementById("resultMap"), {
     center: panoLocation,
     zoom: 6,
@@ -292,3 +323,4 @@ function displayLossResult(){
     map: map,
   });
 }
+

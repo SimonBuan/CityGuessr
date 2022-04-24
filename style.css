@@ -50,6 +50,7 @@ body {
     right: 0;
     width: 15%;
     background-color: #c7c9c8;
+    border: 5px solid #4f4f4d;
     border-radius: 15px;
     margin: 5px;
 }
@@ -58,7 +59,7 @@ body {
     position: fixed;
     visibility: hidden;
     width: 750px;
-    height: 450px;
+    height: 500px;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -70,13 +71,40 @@ body {
 }
 
 #resultMap{
-    top: 50%;
+    top: 30%;
     left: 50%;
     transform: translate(-50%, -50%);
     width: 500px;
-    height: 300px;
+    height: 270px;
     border: 5px solid white;
     border-radius: 30px;
     outline: 5px solid gray;
     outline-offset: 0px;
+}
+
+#resultHeader{
+    text-align: center;
+}
+
+#resultHeader h1{
+    
+    font-size: 32px;
+    text-shadow:  -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+    color: rgba(237,221,50,0.88);
+}
+
+#resultHeader p{
+    font-size: 20px;
+    color: #d1d1cf;
+}
+
+#playAgainButton{
+    position: absolute;
+    left: 50%;
+    bottom: 5%;
+    transform: translate(-50%, 0%);
+    width: 85%;
+    height: 10%;
+    border-radius: 15px;
+    background-color: rgba(237,221,50,0.88);
 }
