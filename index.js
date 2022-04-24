@@ -3,6 +3,8 @@ var panoLocation;
 var guessedLocation;
 var numGuesses = 0;
 var marker;
+var guessButton;
+var resultsOverlay;
 
 const countryBoundingBoxes = [
   [19.3044861183, 39.624997667, 21.0200403175, 42.6882473822],
@@ -108,8 +110,10 @@ function initialize() {
     }
   });
 
-  const guessButton = document.getElementById("guessButton");
+  guessButton = document.getElementById("guessButton");
   guessButton.addEventListener("click", confirmGuess);
+
+  resultsOverlay = document.getElementById("results");
 }
 
 function getRandomLocation() {
@@ -128,6 +132,7 @@ function initPanoramaAndMap(data) {
     streetViewControl: false,
     fullscreenControl: false,
     zoomControl: false,
+    clickableIcons: false
   });
   const panorama = new google.maps.StreetViewPanorama(
     document.getElementById("pano"),
@@ -185,27 +190,24 @@ function degreesToRadians(degrees){
 
 function confirmGuess(){
   if(guessedLocation){
-    addGuessToHTML(guessedLocation);
+    const distance = calculateDistance(guessedLocation, panoLocation);
+    addGuessToHTML(distance);
     numGuesses++;
     marker.setLabel(numGuesses+'');
 
     disableButton();
     marker = null;
+
+    if(distance < 0.1){
+      displayWinResult();
+    }
+    else if(numGuesses >= 5){
+      displayLossResult();
+    }
   }
 }
 
-function disableButton(){
-  guessButton.innerText = "Select a location";
-  guessButton.disabled = true;
-}
-
-function enableButton(){
-  guessButton.innerText = "Confirm guess";
-  guessButton.disabled = false;
-}
-
-function addGuessToHTML(guessedLocation){
-  const distance = calculateDistance(guessedLocation, panoLocation);
+function addGuessToHTML(distance){
   const list = document.getElementById("guessList");
   list.innerHTML += "<li>" + distanceToString(distance) + "</li>";
 }
@@ -223,4 +225,24 @@ function distanceToString(distance){
       unit: 'meter'
     }).format(distance*1000);
   }
+}
+
+function disableButton(){
+  guessButton.innerText = "Select a location";
+  guessButton.disabled = true;
+}
+
+function enableButton(){
+  guessButton.innerText = "Confirm guess";
+  guessButton.disabled = false;
+}
+
+function displayWinResult(){
+  resultsOverlay.style.visibility = "visible";
+  resultsOverlay.style.backgroundColor = "green";
+}
+
+function displayLossResult(){
+  resultsOverlay.style.visibility = "visible";
+  resultsOverlay.style.backgroundColor = "#c71104";
 }

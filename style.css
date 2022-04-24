@@ -53,3 +53,18 @@ body {
     border-radius: 15px;
     margin: 5px;
 }
+
+#results{
+    position: fixed;
+    visibility: hidden;
+    width: 750px;
+    height: 450px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 15;
+    border: 5px solid rgba(237,221,50,0.88);
+    border-radius: 30px;
+    outline: 5px solid rgba(237,221,50,0.88);
+    outline-offset: 0px;
+}
