@@ -1,6 +1,8 @@
 const MAX_PANORAMA_DISTANCE = 100;
 var panoLocation;
 var guessedLocation;
+var bestGuess;
+var bestGuessDistance;
 var numGuesses = 0;
 var marker;
 var guessButton;
@@ -192,6 +194,12 @@ function confirmGuess(){
   if(guessedLocation){
     const distance = calculateDistance(guessedLocation, panoLocation);
     addGuessToHTML(distance);
+
+    if(!bestGuessDistance || distance < bestGuessDistance){
+      bestGuess = guessedLocation;
+      bestGuessDistance = distance;
+    }
+
     numGuesses++;
     marker.setLabel(numGuesses+'');
 
@@ -245,4 +253,42 @@ function displayWinResult(){
 function displayLossResult(){
   resultsOverlay.style.visibility = "visible";
   resultsOverlay.style.backgroundColor = "#c71104";
+
+  const map = new google.maps.Map(document.getElementById("resultMap"), {
+    center: panoLocation,
+    zoom: 6,
+    mapTypeControl: false,
+    streetViewControl: false,
+    fullscreenControl: false,
+    zoomControl: false,
+    clickableIcons: false
+  });
+
+  new google.maps.Marker({
+    position: bestGuess,
+    map: map
+  });
+
+  new google.maps.Marker({
+    position: panoLocation,
+    map: map,
+    icon: "answer-marker.png",
+  });
+
+  const lineSymbol = {
+    path: google.maps.SymbolPath.FORWARD_OPEN_ARROW
+  }
+
+  new google.maps.Polyline({
+    path: [bestGuess, panoLocation],
+    icons: [{
+      icon: lineSymbol,
+      offset: '100%'
+    }],
+    geodesic: true,
+    strokeColor: "#5D665F",
+    strokeOpacity: 1.0,
+    strokeWeight: 4,
+    map: map,
+  });
 }
