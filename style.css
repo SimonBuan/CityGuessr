@@ -37,3 +37,7 @@ body {
     font-weight:300;
     text-shadow: 0 0.04em 0.04em rgba(0,0,0,0.35);
 }
+
+#guessButton:disabled{
+    background-color: black;
+}

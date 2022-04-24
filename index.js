@@ -108,7 +108,8 @@ function initialize() {
     }
   });
 
-  document.getElementById("guessButton").addEventListener("click", confirmGuess);
+  const guessButton = document.getElementById("guessButton");
+  guessButton.addEventListener("click", confirmGuess);
 }
 
 function getRandomLocation() {
@@ -149,6 +150,8 @@ function initPanoramaAndMap(data) {
 
 function selectLocation(location, map) {
   guessedLocation = location;
+  enableButton();
+  
   if(marker != null){
     marker.setMap(null);
   }
@@ -181,11 +184,22 @@ function degreesToRadians(degrees){
 }
 
 function confirmGuess(){
-  if(guessedLocation != undefined){
+  if(guessedLocation){
     calculateDistance(guessedLocation, panoLocation);
     numGuesses++;
     marker.setLabel(numGuesses+'');
 
+    disableButton();
     marker = null;
   }
+}
+
+function disableButton(){
+  guessButton.innerText = "Select a location";
+  guessButton.disabled = true;
+}
+
+function enableButton(){
+  guessButton.innerText = "Confirm guess";
+  guessButton.disabled = false;
 }
