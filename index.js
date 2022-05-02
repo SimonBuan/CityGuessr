@@ -108,19 +108,26 @@ function displayWinResult(){
   resultsOverlay.style.backgroundColor = "green";
 
   const text = document.getElementById("resultHeader")
-  text.innerHTML = "<h1>Victory</h1>";
+  text.innerHTML = "<h1>Correct</h1>";
   text.innerHTML += "<p>You were within 100 meters from the location!"
   createResultHTML();
 }
 
-function displayLossResult(){
+async function displayLossResult(){
   resultsOverlay.style.visibility = "visible";
   resultsOverlay.style.backgroundColor = "#c71104";
 
+  const requestURL = backendURL + "get_current_city/";
+  let response = await fetch(requestURL);
+  let json = await response.json();
+
+  
+  const result = json["city_data"];
+  console.log(result);
+
   const text = document.getElementById("resultHeader")
-  text.innerHTML = "<h1>Defeat</h1>";
-  text.innerHTML += "<p>You were " + 
-    distanceToString(bestGuessDistance) +   " from the right location!</p>";
+  text.innerHTML = "<h1>No More Guesses</h1>";
+  text.innerHTML += "<p>The correct city was " + result[1] + ".";
   createResultHTML();
 }
 
@@ -130,7 +137,6 @@ async function updateSearch(){
   let response = await fetch(requestURL);
   let json = await response.json();
   const results = json.results;
-  console.log(results)
 
   let searchResults = document.getElementById("searchResults");
   searchResults.innerHTML="";
@@ -148,11 +154,19 @@ function addEventToSearchResults(){
 }
 
 async function selectSearchResult(){
-  const requestURL = backendURL + 'guess/' + this.getAttribute("city-id");
+  const cityId = this.getAttribute("city-id");
+  const requestURL = backendURL + 'guess/' + cityId;
   let response = await fetch(requestURL);
   let json = await response.json();
 
-  console.log(json);
+  ++numGuesses;
+  if(json["correct_city"]){
+    displayWinResult();
+  } else if(numGuesses == 5){
+    displayLossResult();
+  } else{
+    updateGuesses(json, cityId);
+  }
 }
 
 function createResultHTML(){
@@ -167,31 +181,10 @@ function createResultHTML(){
   });
 
   new google.maps.Marker({
-    position: bestGuess,
-    map: map
-  });
-
-  new google.maps.Marker({
     position: panoLocation,
     map: map,
     icon: "answer-marker.png",
   });
 
-  const lineSymbol = {
-    path: google.maps.SymbolPath.FORWARD_OPEN_ARROW
-  }
-
-  new google.maps.Polyline({
-    path: [bestGuess, panoLocation],
-    icons: [{
-      icon: lineSymbol,
-      offset: '100%'
-    }],
-    geodesic: true,
-    strokeColor: "#5D665F",
-    strokeOpacity: 1.0,
-    strokeWeight: 4,
-    map: map,
-  });
 }
 

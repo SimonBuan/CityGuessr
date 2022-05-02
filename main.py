@@ -37,7 +37,7 @@ def get_city_data(city_id : int):
     return mycursor.fetchall()[0]
 
 def correct_state(guessed_city):
-    return guessed_city[1] == current_city[1]
+    return guessed_city[2] == current_city[2]
 
 def deg_to_rad(degrees):
     return degrees * (math.pi/180)
@@ -86,3 +86,7 @@ async def guess(city_id: int):
 @app.get("/search/{searchTerm}")
 async def search(searchTerm : str):
     return {"results" : get_cities(searchTerm)}
+
+@app.get("/get_current_city/")
+async def get_city():
+    return {"city_data" : current_city}
