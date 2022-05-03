@@ -123,6 +123,11 @@ body {
     height: 10%;
     border-radius: 15px;
     background-color: rgba(237,221,50,0.88);
+    cursor: pointer;
+}
+
+#playAgainButton:hover{
+  background-color: rgba(241, 231, 119, 0.88);
 }
 
 #previousGuesses{

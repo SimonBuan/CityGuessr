@@ -28,6 +28,9 @@ async function initialize() {
   searchBar = document.getElementById("searchBar");
   searchBar.addEventListener("keyup", updateSearch);
 
+  playAgainButton = document.getElementById("playAgainButton");
+  playAgainButton.addEventListener("click", resetGame);
+
   resultsOverlay = document.getElementById("results");
   resultsOverlay.style.visibility = "hidden";
 }
@@ -40,8 +43,15 @@ function resetGame(){
   numGuesses = 0;
   marker = null;
 
-  document.getElementById("guessList").innerHTML = "";
   document.getElementById("resultHeader").innerHTML = "";
+
+  document.getElementById("guessTable").innerHTML = "<tr><th>City</th><th>State</th><th>Distance</th></tr>";
+  
+  searchBar.value = "";
+
+  const searchResults = document.getElementById("searchResults");
+  searchResults.innerHTML="";
+
   initialize();
 }
 
@@ -99,6 +109,8 @@ function distanceToString(distance){
 
 async function updateSearch(){
   let search = searchBar.value;
+
+  if(search == '') return;
   const requestURL = backendURL + 'search/' + search;
   let response = await fetch(requestURL);
   let json = await response.json();
@@ -180,7 +192,6 @@ async function displayLossResult(){
 
   
   const result = json["city_data"];
-  console.log(result);
 
   const text = document.getElementById("resultHeader")
   text.innerHTML = "<h1>No More Guesses</h1>";
