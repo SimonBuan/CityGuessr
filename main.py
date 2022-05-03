@@ -61,8 +61,8 @@ def get_distance(guessed_city):
 
 @functools.lru_cache(1)
 def get_cities(search: str):
-    mycursor.execute("SELECT id, name, state FROM cities WHERE name LIKE %s", [search.capitalize()+"%"])
-    return mycursor.fetchall()[:10]
+    mycursor.execute("SELECT id, name, state FROM cities WHERE name LIKE %s LIMIT 10", [search.capitalize()+"%"])
+    return mycursor.fetchall()
 
 @app.get("/get_location/")
 async def get_location():
