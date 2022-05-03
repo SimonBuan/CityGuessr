@@ -2,18 +2,13 @@ const MAX_PANORAMA_DISTANCE = 100;
 const backendURL = "http://localhost:5000/";
 var panoLocation;
 var map;
-var guessedLocation;
-var bestGuess;
-var bestGuessDistance;
 var numGuesses = 0;
-var marker;
 var guessButton;
 var playAgainButton;
 var resultsOverlay;
 var searchBar;
 
 window.initialize = initialize;
-
 
 async function initialize() {
   const sv = new google.maps.StreetViewService();
@@ -36,16 +31,11 @@ async function initialize() {
 }
 
 function resetGame(){
-  guessedLocation = null;
-  marker = null;
-  bestGuess = null;
-  bestGuessDistance = null;
   numGuesses = 0;
-  marker = null;
 
   document.getElementById("resultHeader").innerHTML = "";
 
-  document.getElementById("guessTable").innerHTML = "<tr><th>City</th><th>State</th><th>Distance</th></tr>";
+  document.getElementById("guessTable").innerHTML = "<tr><th>City/Town</th><th>State</th><th>Distance</th></tr>";
   
   searchBar.value = "";
 
@@ -141,10 +131,12 @@ async function selectSearchResult(){
 
   if(json["correct_city"]){
     displayWinResult();
-  } else if(numGuesses == 5){
-    displayLossResult();
   } else{
     updateGuesses(json);
+  }
+
+  if(numGuesses == 5){
+    displayLossResult();
   }
 }
 
@@ -178,7 +170,6 @@ function displayWinResult(){
 
   const text = document.getElementById("resultHeader")
   text.innerHTML = "<h1>Correct</h1>";
-  text.innerHTML += "<p>You were within 100 meters from the location!"
   createResultHTML();
 }
 
@@ -195,7 +186,7 @@ async function displayLossResult(){
 
   const text = document.getElementById("resultHeader")
   text.innerHTML = "<h1>No More Guesses</h1>";
-  text.innerHTML += "<p>The correct city was " + result[1] + ".";
+  text.innerHTML += "<p>The correct location was " + result[1] + ".";
   createResultHTML();
 }
 

@@ -59,7 +59,7 @@ def get_distance(guessed_city):
     return earthRadius * c
 
 
-@functools.lru_cache(1)
+@functools.lru_cache(maxsize=16)
 def get_cities(search: str):
     mycursor.execute("SELECT id, name, state FROM cities WHERE name LIKE %s LIMIT 10", [search.capitalize()+"%"])
     return mycursor.fetchall()
@@ -73,11 +73,13 @@ async def get_location():
 
 @app.get("/guess/{city_id}")
 async def guess(city_id: int):
+    guessed_city = get_city_data(city_id)
     if(city_id == current_city[0]):
         return {"correct_city" : True,
-                "correct_state": True}
+                "correct_state": True,
+                "guessed_city" : guessed_city,
+                "distance" : 0}
     else:
-        guessed_city = get_city_data(city_id)
         return {"correct_city" : False,
                 "correct_state" : correct_state(guessed_city),
                 "guessed_city" : guessed_city,
