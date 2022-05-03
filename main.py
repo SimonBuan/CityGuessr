@@ -80,6 +80,7 @@ async def guess(city_id: int):
         guessed_city = get_city_data(city_id)
         return {"correct_city" : False,
                 "correct_state" : correct_state(guessed_city),
+                "guessed_city" : guessed_city,
                 "distance" : get_distance(guessed_city)}
 
 

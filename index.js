@@ -1,6 +1,7 @@
 const MAX_PANORAMA_DISTANCE = 100;
 const backendURL = "http://localhost:5000/";
 var panoLocation;
+var map;
 var guessedLocation;
 var bestGuess;
 var bestGuessDistance;
@@ -23,9 +24,6 @@ async function initialize() {
         initialize();
     }
   });
-
-  playAgainButton = document.getElementById("playAgainButton");
-  playAgainButton.addEventListener("click", resetGame);
 
   searchBar = document.getElementById("searchBar");
   searchBar.addEventListener("keyup", updateSearch);
@@ -57,7 +55,7 @@ async function getRandomLocation() {
 function initPanoramaAndMap(data) {
   panoLocation = data.location.latLng;
   const usCenter = {lat: 39.8283, lng: -98.5795};
-  const map = new google.maps.Map(document.getElementById("map"), {
+  map = new google.maps.Map(document.getElementById("map"), {
     center: usCenter,
     zoom: 3,
     mapTypeControl: false,
@@ -84,51 +82,19 @@ function initPanoramaAndMap(data) {
   })
 }
 
-function addGuessToHTML(distance){
-  const list = document.getElementById("guessList");
-  list.innerHTML += "<li>" + distanceToString(distance) + "</li>";
-}
-
 function distanceToString(distance){
   if(distance >= 1){
     return new Intl.NumberFormat('en-GB', {
       style: 'unit',
-      unit: 'kilometer'
+      unit: 'mile'
     }).format(distance);
   }
   else{
     return new Intl.NumberFormat('en-GB',{
       style: 'unit',
-      unit: 'meter'
-    }).format(distance*1000);
+      unit: 'yard'
+    }).format(distance*1760);
   }
-}
-function displayWinResult(){
-  resultsOverlay.style.visibility = "visible";
-  resultsOverlay.style.backgroundColor = "green";
-
-  const text = document.getElementById("resultHeader")
-  text.innerHTML = "<h1>Correct</h1>";
-  text.innerHTML += "<p>You were within 100 meters from the location!"
-  createResultHTML();
-}
-
-async function displayLossResult(){
-  resultsOverlay.style.visibility = "visible";
-  resultsOverlay.style.backgroundColor = "#c71104";
-
-  const requestURL = backendURL + "get_current_city/";
-  let response = await fetch(requestURL);
-  let json = await response.json();
-
-  
-  const result = json["city_data"];
-  console.log(result);
-
-  const text = document.getElementById("resultHeader")
-  text.innerHTML = "<h1>No More Guesses</h1>";
-  text.innerHTML += "<p>The correct city was " + result[1] + ".";
-  createResultHTML();
 }
 
 async function updateSearch(){
@@ -160,13 +126,66 @@ async function selectSearchResult(){
   let json = await response.json();
 
   ++numGuesses;
+
   if(json["correct_city"]){
     displayWinResult();
   } else if(numGuesses == 5){
     displayLossResult();
   } else{
-    updateGuesses(json, cityId);
+    updateGuesses(json);
   }
+}
+
+function updateGuesses(resultJSON){
+  const guessTable = document.getElementById("guessTable");
+  const guessedCity = resultJSON["guessed_city"];
+
+  var newRow = guessTable.insertRow();
+  var city = newRow.insertCell(0);
+  var state = newRow.insertCell(1);
+  var distance = newRow.insertCell(2);
+  city.innerHTML =  guessedCity[1];
+  state.innerHTML =  guessedCity[2];
+  if(resultJSON.correct_state){
+    state.setAttribute("class", "correctGuess");
+  } else {
+    state.setAttribute("class", "wrongGuess");
+  }
+  distance.innerHTML = distanceToString(resultJSON["distance"]);
+
+  new google.maps.Marker({
+    position: {lat: guessedCity[3], lng: guessedCity[4]},
+    map,
+    label: numGuesses+'',
+  })
+}
+
+function displayWinResult(){
+  resultsOverlay.style.visibility = "visible";
+  resultsOverlay.style.backgroundColor = "green";
+
+  const text = document.getElementById("resultHeader")
+  text.innerHTML = "<h1>Correct</h1>";
+  text.innerHTML += "<p>You were within 100 meters from the location!"
+  createResultHTML();
+}
+
+async function displayLossResult(){
+  resultsOverlay.style.visibility = "visible";
+  resultsOverlay.style.backgroundColor = "#c71104";
+
+  const requestURL = backendURL + "get_current_city/";
+  let response = await fetch(requestURL);
+  let json = await response.json();
+
+  
+  const result = json["city_data"];
+  console.log(result);
+
+  const text = document.getElementById("resultHeader")
+  text.innerHTML = "<h1>No More Guesses</h1>";
+  text.innerHTML += "<p>The correct city was " + result[1] + ".";
+  createResultHTML();
 }
 
 function createResultHTML(){
